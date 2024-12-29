@@ -34,6 +34,9 @@ export const resolvers = {
 
     user: async (_: any, args: { id: string }) => {
       const user = db.users.find((item) => item.id === args.id);
+
+      console.log(db.users, "active user");
+      if (!user) throw new GraphQLError("User not found");
       const following = user?.following.map((id) => db.users.find((item) => item.id === id));
 
       return { ...user, following };
@@ -43,13 +46,7 @@ export const resolvers = {
   Mutation: {
     addPost: async (_: any, args: any) => {
       await waitForOneSecond();
-      db.posts.unshift({
-        id: args.id,
-        caption: args.caption,
-        media: args.media,
-        tags: args.tags,
-        createdBy: args.createdBy,
-      });
+      db.posts.unshift({ id: args.id, caption: args.caption, media: args.media, tags: args.tags, createdBy: args.createdBy });
 
       return "success";
     },
@@ -85,16 +82,10 @@ export const resolvers = {
         newUser = { avatar: args.avatar, email: args.email, following: ["1", "2", "3"], id: nanoid(), location: "", name: args.name, password: "" };
         db.users.unshift(newUser);
         following = newUser.following.map((id) => db.users.find((item) => item.id === id));
-        return {
-          ...newUser,
-          following,
-        };
+        return { ...newUser, following };
       } else {
         following = user.following.map((id) => db.users.find((item) => item.id === id));
-        return {
-          ...user,
-          following,
-        };
+        return { ...user, following };
       }
     },
 
@@ -126,6 +117,8 @@ export const resolvers = {
       });
 
       db.users = updatedUsers;
+
+      console.log(updatedUsers, "Unfollow");
 
       return "success";
     },

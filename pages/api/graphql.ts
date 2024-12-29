@@ -17,6 +17,8 @@ export default cors(async function handler(req, res) {
     res.end();
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-expect-error
   req.body = await json(req, { limit: "50mb" });
   await startServer;
 

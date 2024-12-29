@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { ADD_POST } from "@/graphql/mutation";
 import { GET_ACTIVE_USER, GET_POSTS } from "@/graphql/query";
+import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store/store";
 import { Post } from "@/types/post";
 import { GetUserByIdRes } from "@/types/user";
@@ -24,6 +25,7 @@ type Props = {
 type CreatePost = Omit<Post, "tags" | "location"> & { tags: string[] };
 
 const CreatePost = ({ isOpen, onClose }: Props) => {
+  const { toast } = useToast();
   const form = useRef<FormikProps<CreatePost>>(null);
   const [currentImage, setCurrentImage] = useState<number>(0);
   const userId = useAppStore((state) => state.user);
@@ -40,6 +42,7 @@ const CreatePost = ({ isOpen, onClose }: Props) => {
       await createPost({ variables: values });
       onClose();
     } catch (error) {
+      toast({ title: "Failed to create post", description: "Please try again", variant: "destructive" });
       console.log(error);
     }
   };
@@ -77,6 +80,7 @@ const CreatePost = ({ isOpen, onClose }: Props) => {
       urlList.push(...base64List);
       form?.current?.setFieldValue("media", urlList);
     } catch (error) {
+      toast({ title: "Failed to process file", description: "Please try again", variant: "destructive" });
       console.error("Error processing files:", error);
     }
   };
@@ -98,7 +102,7 @@ const CreatePost = ({ isOpen, onClose }: Props) => {
 
   const initialvalues: CreatePost = {
     caption: "",
-    createdBy: "1",
+    createdBy: userId || "",
     id: nanoid(),
     media: [],
     tags: [],

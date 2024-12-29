@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { FOLLOW_USER, UNFOLLOW_USER } from "@/graphql/mutation";
 import { GET_ACTIVE_USER, GET_POSTS, GET_USERS } from "@/graphql/query";
+import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store/store";
 import { GetUserByIdRes } from "@/types/user";
 import { useMutation, useQuery } from "@apollo/client";
@@ -19,6 +20,7 @@ type Props = {
 
 const ProfileDetail = ({ children, avatar, location, name, id }: Props) => {
   const userId = useAppStore((state) => state.user);
+  const { toast } = useToast();
 
   const { data: activeUser } = useQuery<GetUserByIdRes>(GET_ACTIVE_USER, { variables: { id: userId }, skip: !userId });
   const [followUser, { loading: followLoading }] = useMutation(FOLLOW_USER, {
@@ -43,6 +45,7 @@ const ProfileDetail = ({ children, avatar, location, name, id }: Props) => {
     try {
       await followUser({ variables: { id: id, activeUserId: activeUser?.user?.id } });
     } catch (error) {
+      toast({ title: "Failed to follow user", description: "Please try again", variant: "destructive" });
       console.log(error);
     }
   };
@@ -52,6 +55,7 @@ const ProfileDetail = ({ children, avatar, location, name, id }: Props) => {
     try {
       await unfollowUser({ variables: { id: id, activeUserId: activeUser?.user?.id } });
     } catch (error) {
+      toast({ title: "Failed to unfollow user", description: "Please try again", variant: "destructive" });
       console.log(error);
     }
   };

@@ -158,7 +158,7 @@ const CreatePost = ({ isOpen, onClose }: Props) => {
                       <AvatarImage src={activeUser?.user.avatar} />
                       <AvatarFallback>{activeUser?.user?.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <p className="text-sm text-gray-600 font-semibold">Alice newman</p>
+                    <p className="text-sm text-gray-600 font-semibold">{activeUser?.user?.name}</p>
                   </div>
                   <Field as="textarea" name="caption" placeholder="What's happening?" className="w-full bg-gray-100 rounded-md p-2 focus:outline-none resize-none mb-3" rows={5} />
                   {/* <Field as={Input} name="location" placeholder="Add a location" className="mb-3 py-4" /> */}

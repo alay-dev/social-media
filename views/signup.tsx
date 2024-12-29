@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { SIGNUP } from "@/graphql/mutation";
 import { GET_USERS } from "@/graphql/query";
 import { useAppStore } from "@/store/store";
@@ -16,14 +17,15 @@ type Props = {
 const Signup = ({ setAuthType }: Props) => {
   const { setAuthenticated, setUser } = useAppStore((state) => state);
   const router = useRouter();
-  const [signUp] = useMutation(SIGNUP, { refetchQueries: [{ query: GET_USERS }], awaitRefetchQueries: true });
+  const [signUp, { loading }] = useMutation(SIGNUP);
 
   const onSignup = async (values: User) => {
+    if (loading) return;
     try {
       await signUp({ variables: values });
       setAuthenticated(true);
       setUser(values.id);
-      localStorage.setItem("auth", JSON.stringify(values));
+      localStorage.setItem("auth", values.id);
       router.push("/");
     } catch (error) {
       console.log(error);
@@ -67,7 +69,7 @@ const Signup = ({ setAuthType }: Props) => {
 
         <div className="mt-6">
           <Button type="submit" className="w-full">
-            Create an account
+            {loading ? <Spinner /> : "Create an account"}
           </Button>
         </div>
         <p className="text-sm text-gray-800 mt-6">

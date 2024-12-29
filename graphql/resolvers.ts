@@ -53,7 +53,7 @@ export const resolvers = {
 
     signUp: async (_: any, args: User) => {
       await waitForOneSecond();
-      db.users.unshift({ avatar: args.avatar, id: args.id, location: args.location, name: args.name, password: args.password, email: args.email, following: [] });
+      db.users.unshift({ avatar: args.avatar, id: args.id, location: args.location, name: args.name, password: args.password, email: args.email, following: ["2", "3"] });
 
       return "success";
     },
